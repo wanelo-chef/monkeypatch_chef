@@ -102,6 +102,18 @@ class Chef
           opts
         end
 
+        def compare_user
+          changed = [ :comment, :home, :shell, :password ].select do |user_attrib|
+            !@new_resource.send(user_attrib).nil? && @new_resource.send(user_attrib) != @current_resource.send(user_attrib)
+          end
+
+          changed += [ :uid, :gid ].select do |user_attrib|
+            !@new_resource.send(user_attrib).nil? && @new_resource.send(user_attrib).to_s != @current_resource.send(user_attrib).to_s
+          end
+
+          changed.any?
+        end
+
         private
 
         def check_lock_status
