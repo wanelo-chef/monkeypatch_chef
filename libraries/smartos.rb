@@ -30,7 +30,7 @@ class Chef
           pkg = shell_out!("/opt/local/bin/pkgin se #{new_resource.package_name}", :env => nil, :returns => [0,1])
           pkg.stdout.each_line do |line|
             case line
-            when /^#{new_resource.package_name}-([^-]+)\S/
+            when /^#{new_resource.package_name}-([^-\s]+)\s/
               name, version = line.split[0].split(/-([^-]+)$/)
             end
           end
