@@ -46,16 +46,19 @@ class Chef
   class Provider
     class Cron
       class Unix < Chef::Provider::Cron
+        include Chef::Mixin::ShellOut
 
         private
 
         def read_crontab
-          status, crontab, stderr = run_command_and_return_stdout_stderr(:command => "/usr/bin/crontab -l",:user => @new_resource.user)
-          if status.exitstatus > 1
-            raise Chef::Exceptions::Cron, "Error determining state of #{@new_resource.name}, exit: #{status.exitstatus}"
+          crontab = shell_out('/usr/bin/crontab -l', :user => @new_resource.user)
+          status = crontab.status.to_i
+
+          if status > 1
+            raise Chef::Exceptions::Cron, "Error determining state of #{@new_resource.name}, exit: #{status}"
           end
-          return nil if status.exitstatus > 0
-          crontab.chomp << "\n"
+          return nil if status > 0
+          crontab.stdout.chomp << "\n"
         end
       end
     end
