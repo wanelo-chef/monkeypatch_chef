@@ -33,6 +33,7 @@ class Chef
             when /^#{new_resource.package_name}-([^-\s;]+)[\s;]/
               puts line
               name, version = line.split(/[\s;]/)[0].split(/-([^-]+)$/)
+              break
             end
           end
           @candidate_version = version
